@@ -118,7 +118,7 @@ int main() {
             printf("%f ^ %f = %f\n", a, b, perpangkatan(a, b));
         }
     } else if (operasi == 6) {
-        printf("\nMasukan batas kiri: ");
+        printf("\nMasukan batas kiri: "); // batas kiri selalu lebih besar dari batas kanan
         scanf("%f", &a);
         printf("Masukan batas kanan: ");
         scanf("%f", &b);
