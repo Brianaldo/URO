@@ -3,12 +3,12 @@
 dan integral tentu menggunakan pendekatan riemann metode trapesium */
 
 #include <stdio.h>
-#include <math.h>
+#include <stdbool.h> 
 
 /* Prototype Fungsi */
 /* Fungsi Penjumlahan */
 float penjumlahan (float a, float b)
-/* Fungsi menerima 2 float dan menjumlahkannya (a + b)*/
+/* Fungsi menerima 2 float dan menjumlahkannya (a + b) */
 {
 /* KAMUS LOKAL */
 
@@ -18,7 +18,7 @@ float penjumlahan (float a, float b)
 
 /* Fungsi Penngurangan */
 float pengurangan (float a, float b)
-/* Fungsi menerima 2 float dan mengurangkannya (a - b)*/
+/* Fungsi menerima 2 float dan mengurangkannya (a - b) */
 {
 /* KAMUS LOKAL */
 
@@ -28,7 +28,7 @@ float pengurangan (float a, float b)
 
 /* Fungsi Perkalian */
 float perkalian (float a, float b)
-/* Fungsi menerima 2 float dan mengalikannya (a * b)*/
+/* Fungsi menerima 2 float dan mengalikannya (a * b) */
 {
 /* KAMUS LOKAL */
 
@@ -38,7 +38,7 @@ float perkalian (float a, float b)
 
 /* Fungsi Pembagian */
 float pembagian (float a, float b)
-/* Fungsi menerima 2 float dan membaginya (a / b)*/
+/* Fungsi menerima 2 float dan membaginya (a / b) */
 {
 /* KAMUS LOKAL */
 
@@ -51,85 +51,176 @@ float perpangkatan (float a, float b)
 /* Fungsi menerima 2 float dan membaginya (a ^ b) */
 {
 /* KAMUS LOKAL */
-
+    float c;
 /* ALGORITMA */
-    return pow(a, b);
+    c = 1;
+    while (b > 0) {
+        c = c * a;
+        b = b - 1;
+    }
+    return c;
 }
 
 /* Fungsi Integral Riemann */
-float integralRiemann (float a, float b, int partisi)
+float integralRiemann ()
 /* Fungsi menghitung integral tertentu dari y = x^3 + x + 1 menggunakan Riemann */
 {
 /* KAMUS LOKAL */
-float luas, delta;
+    int d, i;
+    float koef[d + 1], a, b, partisi, interval, luas, bKiri, bKanan;
 /* ALGORITMA */
+    printf("Polinomial berderajat? ");
+    scanf("%d", &d);
+    i = d;
+    while (i >= 0) {
+        printf("Koefisien derajat ke-%d = ", i);
+        scanf("%f", &koef[i]);
+        i = i - 1;
+    }
+    i = d;
+    printf("\nf(x) = ");
+    while (i >= 0) {
+        if (i == 0) {
+            printf("%f\n", koef[i]);
+        } else if (i == 1) {
+            printf("%f x + ", koef[i]);
+        } else {
+            printf("%f x^(%d) + ", koef[i], i);
+        }
+        i = i - 1;
+    }
+
+    printf("\nMasukan batas bawah: ");
+    scanf("%f", &a);
+    printf("Masukan batas atas: ");
+    scanf("%f", &b);
+    while (b < a) {
+        printf("INPUT TIDAK VALID (Batas atas harus lebih besar dari batas bawah)\n");
+        printf("Masukan batas atas: ");
+        scanf("%f", &b);
+    }
+    printf("Masukan banyak partisi: ");
+    scanf("%f", &partisi);
+    while (partisi <= 0) {
+        printf("INPUT TIDAK VALID (Partisi harus lebih besar dari 0)\n");
+        printf("Masukan banyak partisi: ");
+        scanf("%f", &partisi);
+    }
+    interval = (b - a) / partisi;
     luas = 0;
-    delta = (b - a) / partisi;
     while (a < b) {
-        luas = luas + (delta * ((pow(a, 3) + a + 1) + (pow((a + delta), 3) + (a + delta) + 1))/2);
-        a = a + delta;
+        i = d;
+        bKiri = 0;
+        bKanan = 0;
+        while (i >= 0) {
+            bKiri = bKiri + (perpangkatan(a, i) * koef[i]);
+            bKanan = bKanan + (perpangkatan((a + interval), i) * koef[i]);
+            i = i - 1;
+        }
+        luas = luas + ((bKiri + bKanan) * interval / 2);
+        a = a + interval;
     }
     return luas;
 }
 
+/* Fungsi Cek Integer */
+bool cekInteger (float b)
+/* Fungsi memeriksa apakah masukan merupakan integer*/
+{
+/* KAMUS LOKAL */
+
+/* ALGORITMA */
+    while (b > 0) {
+        b = b - 1;
+    }
+    if (b == 0) {
+        return true;
+    } else {
+        return false;
+    }
+}
+
 int main() {
 /* KAMUS */
-    float a, b;
-    int operasi, partisi; 
+    float a, b, hasil;
+    int pilih, partisi;
+    char operasi; 
 
 /* ALGORITMA */
 /* input */
-    printf("========================================\n");
-    printf("===========PROGRAM KALKULATOR===========\n\n");
+    printf("\n===========PROGRAM KALKULATOR===========\n\n");
     printf("Pilih operasi yang diinginkan:\n");
-    printf("1. Penjumlahan\n");
-    printf("2. Pengurangan\n");
-    printf("3. Perkalian\n");
-    printf("4. Pembagian\n");
-    printf("5. Perpangkatan\n");
-    printf("6. Integral tentu (trapesium Riemman)\n");
-    printf("Pilih operasi (1 - 6): ");
-    scanf("%d", &operasi);
-
+    printf("1. Kalkulator Sederharna\n");
+    printf("2. Integral tentu (trapesium Riemman)\n");
+    printf("Pilih operasi (1 atau 2): ");
+    scanf(" %d", &pilih);
+    while ((pilih != 1) && (pilih != 2)) {
+        printf("INPUT TIDAK VALID\n");
+        printf("Pilih operasi (1 atau 2): ");
+        scanf(" %d", &pilih);
+    }
+    
 /* Kalkulator */
-    if (operasi == 1 || operasi == 2 || operasi == 3 || operasi == 4 || operasi == 5) {
-        printf("\nMasukan bilangan pertama: ");
+    if (pilih == 1) {
+        printf("\n==========KALKULATOR SEDERHANA==========\n\n");
+        printf("List operasi: \n");
+        printf("(+) Penjumlahan\n");
+        printf("(-) Pengurangan\n");
+        printf("(*) Perkalian\n");
+        printf("(/) Pembagian\n");
+        printf("(^) Perpangkatan\n");
+        printf("(x) Keluar\n");
+        printf("Masukan bilangan: ");
         scanf("%f", &a);
-        printf("Masukan bilangan kedua: ");
-        scanf("%f", &b);
-        if (operasi == 1) {
-            printf("\n==============PENJUMLAHAN===============\n");
-            printf("%f + %f = %f\n", a, b, penjumlahan(a, b));
+        hasil = a;
+        printf("Operasi: ");
+        scanf(" %c", &operasi);
+        while (operasi != 'x') {
+            if (operasi == '+' || operasi == '-' || operasi == '*' || operasi == '/' || operasi == '^') {
+                if (operasi == '+') {
+                    printf("Masukan bilangan: ");
+                    scanf("%f", &b);
+                    hasil = penjumlahan(hasil, b);
+                }
+                else if (operasi == '-') {
+                    printf("Masukan bilangan: ");
+                    scanf("%f", &b);
+                    hasil = pengurangan(hasil, b);
+                }
+                else if (operasi == '*') {
+                    printf("Masukan bilangan: ");
+                    scanf("%f", &b);
+                    hasil = perkalian(hasil, b);
+                }
+                else if (operasi == '/') {
+                    printf("Masukan bilangan: ");
+                    scanf("%f", &b);
+                    hasil = pembagian(hasil, b);
+                } else if (operasi == '^') {
+                    printf("Masukan bilangan: ");
+                    scanf("%f", &b);
+                    while (cekInteger(b) == false) {
+                        printf("INPUT TIDAK VALID (Harus Bilangan Bulat)");
+                        printf("Masukan bilangan: ");
+                        scanf("%f", &b);
+                    }
+                    hasil = perpangkatan(hasil, b);
+                }
+                printf("%f %c %f = %f\n", a, operasi, b, hasil);
+                a = hasil;
+            } else {
+                printf("INPUT TIDAK VALID\n");
+            }
+            printf("Operasi: ");
+            scanf(" %c", &operasi);
         }
-        else if (operasi == 2) {
-            printf("\n==============PENGURANGAN===============\n");
-            printf("%f - %f = %f\n", a, b, pengurangan(a, b));
-        }
-        else if (operasi == 3) {
-            printf("\n===============PERKALIAN================\n");
-            printf("%f x %f = %f\n", a, b, perkalian(a, b));
-        }
-        else if (operasi == 4) {
-            printf("\n===============PEMBAGIAN================\n");
-            printf("%f / %f = %f\n", a, b, pembagian(a, b));
-        }
-        else {
-            printf("\n==============PERPANGKATAN==============\n");
-            printf("%f ^ %f = %f\n", a, b, perpangkatan(a, b));
-        }
-    } else if (operasi == 6) {
-        printf("\nMasukan batas kiri: "); // batas kiri selalu lebih kecil dari batas kanan
-        scanf("%f", &a);
-        printf("Masukan batas kanan: ");
-        scanf("%f", &b);
-        printf("Masukan banyak partisi: ");
-        scanf("%d", &partisi);
+    }
+    else if (pilih == 2) {
         printf("\n================INTEGRAL================\n");
-        printf("Integral x^3 + x + 1 dari %f sampai %f = %f\n", a, b, integralRiemann(a, b, partisi));
+        printf("\nHasil = %f\n",integralRiemann());
     return 0;
     } else {
         printf("Input tidak valid\n");
     }
-
     return 0;
 }
